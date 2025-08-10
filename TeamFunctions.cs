@@ -5,7 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-
+public class Team
+{
+    public string teamName { get; set; }
+    public List<Player> players { get; set; } = new List<Player>();
+}
 
 namespace DraftingAppv2
 {
@@ -31,6 +35,20 @@ namespace DraftingAppv2
             {
                 Console.WriteLine($"{p.Ranking,-10}{p.playerName,-25}{p.playerPos,-10}{p.juniorTeam,-40}{(p.isDrafted ? "✓" : " ")}");
             }
+        }
+        public static void nameTeam(Team t, string name)
+        {
+            t.teamName = name;
+        }
+
+        public static string getTeamName(Team t)
+        {
+            return t.teamName;
+        }
+
+        public static List<Player> teamPlayers(Team t)
+        {
+            return t.players;
         }
     }
 }
