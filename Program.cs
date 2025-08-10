@@ -12,11 +12,12 @@ class Program
         string playerData = Path.Combine(projectRoot, "data", "testData.csv");
 
         var players = PlayerFunctions.playerReader(playerData);
-        string? teamName = "";
         bool started = false;
         bool running = true;
-        List<Player> team = new List<Player>();
-        int numOfPicks = 7;
+        List<Player> team2 = new List<Player>();
+        int numOfPicks = 8;
+
+        Team team = new Team();
         
 
         while(running)
@@ -34,7 +35,8 @@ class Program
                 if (input == "q")
                 {
                     Console.Write("Enter Team Name:");
-                    teamName = Console.ReadLine();
+                    string? newName = Console.ReadLine();
+                    TeamFunctions.nameTeam(team, newName);
                     started = true;
                 }
                 else
@@ -46,7 +48,7 @@ class Program
             {
                 Console.WriteLine(" ");
                 Console.WriteLine(new string('-', 100));
-                Console.WriteLine(teamName);
+                Console.WriteLine(TeamFunctions.getTeamName(team));
                 Console.WriteLine(new string('-',100));
                 Console.WriteLine("1. View All Players");
                 Console.WriteLine("2. Filter by Position");
@@ -66,6 +68,7 @@ class Program
 
                     //Filter by pos
                     case "2":
+                        Console.WriteLine(" ");
                         Console.Write("Enter Position to filer(C,R,L,D,G):");
                         string? pos = Console.ReadLine()?.ToLower();
                         PlayerFunctions.DisplayPlayers(players.Where(p => p.playerPos.Equals(pos, StringComparison.OrdinalIgnoreCase)).ToList());
@@ -73,6 +76,7 @@ class Program
 
                     //Drafting
                     case "3":
+                        Console.WriteLine(" ");
                         Console.WriteLine($"You have {numOfPicks} picks left!");
                         Console.Write("Enter ranking of player to Draft:");
 
@@ -80,13 +84,18 @@ class Program
                         {
                             var player = players.FirstOrDefault(p => p.Ranking == draftedPlayer);
 
-                            if(player != null && !player.isDrafted)
+                            if (player != null && !player.isDrafted && numOfPicks > 0)
                             {
                                 player.isDrafted = true;
-                                TeamFunctions.addPlayer(player, team);
+                                TeamFunctions.addPlayer(player, TeamFunctions.teamPlayers(team));
                                 Console.WriteLine($"You Drafted {player.playerName} !");
+                                Console.WriteLine(" ");
                                 numOfPicks--;
 
+                            }
+                            else if (numOfPicks <= 0)
+                            {
+                                Console.WriteLine("Out of Picks!");
                             }
                             else
                             {
@@ -96,10 +105,20 @@ class Program
                         break;
                     //Display Team
                     case "4":
-                        TeamFunctions.DisplayTeam(team);
+                        Console.WriteLine(" ");
+                        Console.WriteLine(new string('-', 100));
+                        Console.WriteLine(TeamFunctions.getTeamName(team));
+                        TeamFunctions.DisplayTeam(TeamFunctions.teamPlayers(team));
+                        Console.WriteLine(" ");
                         break;
+                    //Edit Team
                     case "5":
-                        TeamFunctions.DisplayTeam(team);
+                        Console.WriteLine(" ");
+                        Console.Write("Enter New Team Name:");
+                        string? newName = Console.ReadLine();
+                        Console.Write("Team Name Changed!");
+                        Console.WriteLine(" ");
+                        TeamFunctions.nameTeam(team, newName);
                         break;
                     //End
                     case "6":
